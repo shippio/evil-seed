@@ -27,19 +27,19 @@ module EvilSeed
     def call(attributes)
       attributes.deep_dup.tap do |attrs|
         @changers.each do |attribute, changer|
-          attrs[attribute] = changer.call
+          attrs[attribute] = changer.call(attrs[attribute])
         end
       end
     end
 
     def respond_to_missing?(attribute_name)
-      @model_class.attribute_names.include?(attribute_name.to_s) || super
+      @model_class.column_names.include?(attribute_name.to_s) || super
     end
 
     private
 
     def method_missing(attribute_name, &block)
-      return super unless @model_class.attribute_names.include?(attribute_name.to_s)
+      return super unless @model_class.column_names.include?(attribute_name.to_s)
       @changers[attribute_name.to_s] = block
     end
   end

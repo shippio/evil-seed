@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'active_support/core_ext/array/grouping'
+
 # As method ActiveRecord::Relation#in_batches is available only since ActiveRecord 5.0
 # we will backport it only for us via refinements for ActiveRecord 4.2 compatibility.
 unless ActiveRecord::Batches.instance_methods(false).include?(:in_batches)
@@ -122,8 +124,8 @@ module EvilSeed
     # @param relation [ActiveRecord::Relation]
     # @return [Array<Hash{String => String, Integer, Float, Boolean, nil}>]
     def fetch_attributes(relation)
-      relation.pluck(*model_class.attribute_names).map do |row|
-        Hash[model_class.attribute_names.zip(row)]
+      relation.pluck(*model_class.column_names).map do |row|
+        Hash[model_class.column_names.zip(row)]
       end
     end
 
